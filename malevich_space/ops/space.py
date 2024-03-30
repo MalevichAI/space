@@ -466,10 +466,10 @@ class SpaceOps(BaseService):
             ]
         )
 
-    async def subscribe_to_status(self, run_id: str) -> Iterable[schema.RunCompStatus | str]:
+    async def subscribe_to_status(self, run_id: str, timeout: int = 150) -> Iterable[schema.RunCompStatus | str]:
         client_ = Client(
             transport=WebsocketsTransport(url=self.space_setup.ws_url()),
-            execute_timeout=60
+            execute_timeout=timeout
         )
 
         subscription = client_.subscribe_async(
