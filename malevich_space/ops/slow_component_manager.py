@@ -32,7 +32,7 @@ class SlowComponentManager(BaseComponentManager):
         comp_dir: str | None = None,
         component_provider: BaseComponentProvider | None = None
     ) -> None:
-        super.__init__(space, host, comp_dir, component_provider)
+        super().__init__(space, host, comp_dir, component_provider)
 
     def increment_version(self, previous: str | None, mode: str):
         if not previous:

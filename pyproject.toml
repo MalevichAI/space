@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "malevich-space"
-version = "0.4.14"
+version = "0.4.16"
 description = "SDK for Malevich Space"
 authors = ["Zak Davydov <zak@malevich.ai>"]
 license = "Apache 2"
