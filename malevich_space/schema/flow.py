@@ -2,7 +2,7 @@ from typing import Sequence, Union
 
 from pydantic import BaseModel
 
-from .cfg import CfgSchema
+from .cfg import CfgSchema, LoadedCfgSchema
 from .op import LoadedOpSchema, OpSchema
 
 
@@ -73,6 +73,7 @@ class LoadedInFlowComponentSchema(InFlowComponentSchema):
     collection: LoadedInFlowCollectionSchema | None = None
     prev: list["LoadedInFlowComponentSchema"] = []
     alias: str | None = None
+    active_cfg: LoadedCfgSchema | None = None
 
 
 

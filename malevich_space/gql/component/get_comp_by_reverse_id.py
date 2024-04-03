@@ -48,6 +48,15 @@ get_comp_with_reverse_id = gql(
                       reverseId
                     }
                   }
+                  cfg {
+                    details {
+                      uid
+                      coreId
+                      coreName
+                      cfgJson
+                      readableName
+                    }
+                  }
                   app {
                     details {
                       uid
