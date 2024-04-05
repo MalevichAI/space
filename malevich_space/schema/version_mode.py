@@ -6,3 +6,4 @@ class VersionMode(Enum):
     MINOR = "minor"
     PATCH = "patch"
     DEFAULT = "default"
+    OVERRIDE = "override"

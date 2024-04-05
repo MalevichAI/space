@@ -76,7 +76,6 @@ class LoadedInFlowComponentSchema(InFlowComponentSchema):
     active_cfg: LoadedCfgSchema | None = None
 
 
-
 class FlowSchema(BaseModel):
     is_demo: bool | None = False
     components: Sequence[InFlowComponentSchema] = []

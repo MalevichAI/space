@@ -293,6 +293,7 @@ class SlowComponentManager(BaseComponentManager):
             self._create_schema(comp.required_schema)
         branch_status = self.default_branch_status
         version_status = self.default_version_status
+        version_id = None
         version_name = None
         version_update_md = self.default_version_update_md
         commit_digest = None
@@ -333,10 +334,13 @@ class SlowComponentManager(BaseComponentManager):
                     old_version: schema.LoadedVersionSchema = loaded.version
                     old_version_name = old_version.readable_name
                     branch_id = loaded.branch.uid
-                if not version_name:
-                    version_name = self.increment_version(
-                        old_version_name, mode=version_mode.value
-                    )
+                if version_mode != schema.VersionMode.OVERRIDE:
+                    if not version_name:
+                        version_name = self.increment_version(
+                            old_version_name, mode=version_mode.value
+                        )
+                else:
+                    version_id = loaded.version.uid
         else:
             kwargs = comp.model_dump()
             kwargs["type"] = comp.type().value
@@ -357,14 +361,17 @@ class SlowComponentManager(BaseComponentManager):
             )
             if not version_name:
                 version_name = self.default_version_name
-
-        new_version_id = self.space.create_version(
-            branch_id=branch_id,
-            readable_name=version_name,
-            updates_markdown=version_update_md,
-            branch_version_status=version_status,
-            commit_digest=commit_digest
-        )
+            
+        if not version_id:
+            new_version_id = self.space.create_version(
+                branch_id=branch_id,
+                readable_name=version_name,
+                updates_markdown=version_update_md,
+                branch_version_status=version_status,
+                commit_digest=commit_digest
+            )
+        else:
+            new_version_id = version_id
 
         logging.info(f"New version uid: {new_version_id}")
 
