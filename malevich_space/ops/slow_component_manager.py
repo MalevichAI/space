@@ -226,8 +226,8 @@ class SlowComponentManager(BaseComponentManager):
         collection: schema.CollectionAliasSchema,
         attach2version_id: str,
     ) -> schema.LoadedComponentSchema | None:
-        docs = None
-        if collection.path and self.comp_dir:
+        docs = collection.docs
+        if not docs and collection.path and self.comp_dir:
             src_collection_at_path = os.path.join(self.comp_dir, collection.path)
             docs = self._get_json_docs(self._get_df(src_collection_at_path))
         ca_id = self.space.create_collection(
