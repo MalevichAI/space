@@ -60,6 +60,15 @@ query GetComponentByReverseID($reverse_id: String, $uid: String) {
                   reverseId
                 }
               }
+                  cfg {
+                    details {
+                      uid
+                      coreId
+                      coreName
+                      cfgJson
+                      readableName
+                    }
+                  }
               app {
                 details {
                   uid

@@ -404,6 +404,16 @@ class SpaceOps(BaseService):
             )
         except (KeyError, ValueError, TypeError):
             pass
+        if "cfg" in in_flow_data["node"] and in_flow_data["node"]["cfg"] is not None:
+            details = in_flow_data["node"]["cfg"]["details"]
+            cfg = schema.LoadedCfgSchema(
+                uid=details["uid"],
+                readable_name=details["readableName"],
+                core_name=details["coreName"],
+                core_id=details["coreId"],
+                cfg_json=json.loads(details["cfgJson"]) if details["cfgJson"] else None
+            )
+            base_data["active_cfg"] = cfg
         return schema.LoadedInFlowComponentSchema(**base_data)
 
     def _parse_comp(self, comp: dict[str, Any]) -> schema.LoadedComponentSchema:
