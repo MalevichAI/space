@@ -16,8 +16,10 @@ create_branch = gql(
             }
           }
         ) {
-          uid
-          name
+          details {
+            uid
+            name
+          }
         }
       }
     }
