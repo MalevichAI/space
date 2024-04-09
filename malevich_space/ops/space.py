@@ -10,7 +10,7 @@ from graphql import DocumentNode, ExecutionResult
 
 import malevich_space.gql as client
 import malevich_space.schema as schema
-from ..schema.flow import LoadedInFlowCollectionSchema
+from ..schema.flow import LoadedInFlowCollectionSchema, LoadedOpSchema
 
 from .service import BaseService
 
@@ -352,7 +352,13 @@ class SpaceOps(BaseService):
 
     def _parse_in_flow_app(self, app_data) -> schema.LoadedInFlowAppSchema | None:
         if app_data:
-            return schema.LoadedInFlowAppSchema(app_id=app_data["details"]["uid"])
+            return schema.LoadedInFlowAppSchema(
+                app_id=app_data["details"]["uid"],
+                active_op=[
+                    LoadedOpSchema(**y['node']['details'])
+                    for y in app_data['op']['edges']
+                ]
+            )
         return None
 
     def _parse_in_flow_prompt(self, prompt_data) -> schema.LoadedPromptSchema | None:

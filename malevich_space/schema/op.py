@@ -13,28 +13,28 @@ class OpArg(BaseModel):
 
 
 class OpSchema(BaseModel):
-    core_id: str
-    type: str
+    core_id: str | None = None
+    type: str | None = None
 
     requires: Sequence[DepSchema] = []
 
 
 class LoadedOpSchema(OpSchema):
     uid: str
-    name: Optional[str]
-    doc: Optional[str]
-    finish_msg: Optional[str]
+    name: Optional[str] = None
+    doc: Optional[str] = None
+    finish_msg: Optional[str] = None
 
-    tl: Optional[int]
-    query: Optional[str]
-    mode: Optional[str]
+    tl: Optional[int] = None
+    query: Optional[str] = None
+    mode: Optional[str] = None
 
-    collections_names: Optional[list[str]]
-    extra_collections_names: Optional[list[str]]
+    collections_names: Optional[list[str]]  = None
+    extra_collections_names: Optional[list[str]] = None
 
-    collection_out_names: Optional[list[str]]
+    collection_out_names: Optional[list[str]] = None
 
-    args: Optional[list[OpArg]]
+    args: Optional[list[OpArg]] = None
 
     input_schema: Sequence[LoadedSchemaSchema] = []
     output_schema: Sequence[LoadedSchemaSchema] = []

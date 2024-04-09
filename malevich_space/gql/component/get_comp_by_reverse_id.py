@@ -78,6 +78,7 @@ query GetComponentByReverseID($reverse_id: String, $uid: String) {
                     node {
                       details {
                         uid
+                        name
                       }
                     }
                   }
