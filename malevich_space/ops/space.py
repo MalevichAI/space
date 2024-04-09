@@ -165,7 +165,7 @@ class SpaceOps(BaseService):
 
     def create_branch(self, *args, **kwargs) -> str:
         result = self.client.execute(client.create_branch, variable_values=kwargs)
-        return result["component"]["createBranch"]["uid"]
+        return result["component"]["createBranch"]["details"]["uid"]
 
     def create_version(self, *args, **kwargs) -> str:
         result = self.client.execute(client.create_version, variable_values=kwargs)
