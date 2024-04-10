@@ -784,3 +784,30 @@ class SpaceOps(BaseService):
         kwargs["host_id"] = host_id
         result = self._org_request(client.create_asset_in_version, variable_values=kwargs)
         return self._parse_asset(result["version"]["createUnderlyingAsset"])
+
+    def auto_layout(self, *, flow: str):
+        self.client.execute(client.auto_layout, variable_values={"flow": flow})
+
+    def get_task_core_id(self, *, task_id: str) -> tuple[str, str]:
+        result = self._org_request(client.get_task_core_id, variable_values={"task_id": task_id})
+        return result["task"]["details"]["coreId"], result["task"]["component"]["details"]["reverseId"]
+    
+    def get_deployments_by_reverse_id(self, *, reverse_id: str, status: list[str] | None = None) -> list[schema.LoadedTaskSchema]:
+        results = self._org_request(client.get_deployments_for_reverse_id, variable_values={"reverse_id": reverse_id, "status": status})
+        results = results["tasks"]["component"]["edges"]
+
+        out = []
+
+        for result in results:
+            task = result["node"]
+            details = task["details"]
+            out.append(
+                schema.LoadedTaskSchema(
+                    uid=details["uid"],
+                    state=details["bootState"],
+                    core_id=details["coreId"],
+                    last_runned_at=details["lastRunnedAt"]
+                )
+            )
+
+        return out
