@@ -14,3 +14,6 @@ from .status import *
 from .build_v2 import *
 
 from .update_endpoint_task import *
+
+from .core_id import *
+from .get_deployments import *

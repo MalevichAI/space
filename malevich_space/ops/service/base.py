@@ -232,3 +232,13 @@ class BaseService(ABC):
             host_id: str | None = None
     ) -> schema.Asset:
         raise NotImplementedError
+    
+    @abstractmethod
+    def auto_layout(self, *, flow: str):
+        raise NotImplementedError
+    
+    @abstractmethod
+    def get_task_core_id(self, *, task_id: str) -> tuple[str, str]:
+        raise NotImplementedError
+    
+    
