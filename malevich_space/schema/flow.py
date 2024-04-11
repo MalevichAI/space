@@ -55,6 +55,10 @@ class LoadedInFlowCollectionSchema(BaseModel):
     collection_id: str
 
 
+class LoadedInFlowAssetSchema(BaseModel):
+    asset_id: str
+
+
 class LoadedPromptSchema(BaseModel):
     uid: str
     body: str
@@ -74,6 +78,7 @@ class LoadedInFlowComponentSchema(InFlowComponentSchema):
     prev: list["LoadedInFlowComponentSchema"] = []
     alias: str | None = None
     active_cfg: LoadedCfgSchema | None = None
+    asset: LoadedInFlowAssetSchema | None = None
 
 
 class FlowSchema(BaseModel):

@@ -11,6 +11,7 @@ from .flow import FlowSchema, LoadedFlowSchema
 from .op import LoadedOpSchema, OpSchema
 from .schema import SchemaMetadata
 from .version import LoadedVersionSchema, VersionSchema
+from .asset import Asset
 
 
 class AppSchema(BaseModel):
@@ -42,6 +43,7 @@ class ComponentType(Enum):
     APP = "app"
     FLOW = "flow"
     COLLECTION = "collection"
+    ASSET = "asset"
 
 
 class ComponentSchema(BaseModel):
@@ -70,6 +72,7 @@ class ComponentSchema(BaseModel):
     app: AppSchema | None = None
     flow: FlowSchema | None = None
     collection: CollectionAliasSchema | None = None
+    asset: Asset | None = None
 
     icon: str | None = None
     hf_url: str | None = None
@@ -93,6 +96,8 @@ class ComponentSchema(BaseModel):
             return self.flow is not None
         elif type_in == ComponentType.COLLECTION:
             return self.collection is not None
+        elif type_in == ComponentType.ASSET:
+            return self.asset is not None
         return False
 
     def type(self) -> ComponentType:
@@ -102,6 +107,8 @@ class ComponentSchema(BaseModel):
             return ComponentType.FLOW
         elif self.collection:
             return ComponentType.COLLECTION
+        elif self.asset:
+            return ComponentType.ASSET
         raise TypeError("Unknown component type")
 
     def __str__(self) -> str:

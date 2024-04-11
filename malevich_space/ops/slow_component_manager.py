@@ -239,6 +239,10 @@ class SlowComponentManager(BaseComponentManager):
         )
         self.space.create_collection_in_version(version_id=attach2version_id, ca_id=ca_id)
         return self.space.get_parsed_component_by_reverse_id(reverse_id=reverse_id)
+    
+    def _asset2version(self, reverse_id: str, asset: schema.Asset, attach2version_id: str) -> schema.Asset:
+        self.space.create_asset_in_version(version_id=attach2version_id, asset=asset, host_id=self.host.uid)
+        return self.space.get_parsed_component_by_reverse_id(reverse_id=reverse_id)
 
     def component2version(self, comp: schema.ComponentSchema, attach2version_id: str):
         created = None
@@ -255,6 +259,8 @@ class SlowComponentManager(BaseComponentManager):
             logging.debug(f"New flow instance uid: {created.flow.uid}")
         if comp.collection:
             created = self._collection_alias2version(comp.reverse_id, comp.collection, attach2version_id)
+        if comp.asset:
+            created = self._asset2version(comp.reverse_id, comp.asset, attach2version_id)
         return created
 
     def _create_schema(self, schema_metadata: list[schema.SchemaMetadata]):
@@ -284,7 +290,7 @@ class SlowComponentManager(BaseComponentManager):
         self.attach_metadata(comp_id=loaded.uid, comp=update_comp)
 
     def component(
-        self, comp: schema.ComponentSchema, version_mode: schema.VersionMode
+        self, comp: schema.ComponentSchema, version_mode: schema.VersionMode, sync: bool = False
     ) -> schema.LoadedComponentSchema:
         loaded = self.space.get_parsed_component_by_reverse_id(
             reverse_id=comp.reverse_id

@@ -234,11 +234,23 @@ class BaseService(ABC):
         raise NotImplementedError
     
     @abstractmethod
+    def create_asset_in_version(
+            self,
+            *,
+            version_id: str,
+            asset: schema.CreateAsset,
+            host_id: str | None = None
+    ) -> schema.Asset:
+        raise NotImplementedError
+    
+    @abstractmethod
     def auto_layout(self, *, flow: str):
         raise NotImplementedError
     
     @abstractmethod
     def get_task_core_id(self, *, task_id: str) -> tuple[str, str]:
         raise NotImplementedError
-    
-    
+
+    @abstractmethod
+    def get_deployments_by_reverse_id(self, *, reverse_id: str) -> list[schema.LoadedTaskSchema]:
+        raise NotImplementedError

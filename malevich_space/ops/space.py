@@ -462,7 +462,16 @@ class SpaceOps(BaseService):
             base_data["collection"] = schema.LoadedCollectionAliasSchema(
                 uid=version["collection"]["details"]["uid"]
             )
-        return schema.LoadedComponentSchema(**base_data)
+        if version and "asset" in version and version["asset"]:
+            base_data["asset"] = schema.Asset(
+                uid=version["asset"]["details"]["uid"],
+                core_path=version["asset"]["details"]["corePath"],
+                download_url=version["asset"]["downloadUrl"],
+                upload_url=version["asset"]["uploadUrl"],
+            )
+        comp = schema.LoadedComponentSchema(**base_data)
+        print(comp)
+        return comp
 
     def get_parsed_component_by_reverse_id(
         self, *args, **kwargs
@@ -470,7 +479,9 @@ class SpaceOps(BaseService):
         comp = self.get_component_by_reverse_id(*args, **kwargs)
         if not comp:
             return None
-        return self._parse_comp(comp)
+        comp = self._parse_comp(comp)
+        print(comp)
+        return comp
 
     def get_flow(self, uid: str) -> schema.LoadedFlowSchema:
         results = self.client.execute(client.get_flow, variable_values={"flow_id": uid})
@@ -756,7 +767,7 @@ class SpaceOps(BaseService):
             *,
             asset: schema.CreateAsset,
             host_id: str | None = None
-    ) -> tuple[str, str]:
+    ) -> schema.Asset:
         kwargs = asset.model_dump()
         kwargs["host_id"] = host_id
         result = self._org_request(client.create_asset, variable_values=kwargs)
