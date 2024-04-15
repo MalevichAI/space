@@ -10,6 +10,6 @@ class CreateAsset(BaseModel):
 
 
 class Asset(CreateAsset):
-    uid: str
-    upload_url: str
+    uid: str | None = None
+    upload_url: str | None = None
     download_url: str | None = None
