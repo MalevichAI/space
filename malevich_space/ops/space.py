@@ -470,7 +470,6 @@ class SpaceOps(BaseService):
                 upload_url=version["asset"]["uploadUrl"],
             )
         comp = schema.LoadedComponentSchema(**base_data)
-        print(comp)
         return comp
 
     def get_parsed_component_by_reverse_id(
@@ -480,7 +479,6 @@ class SpaceOps(BaseService):
         if not comp:
             return None
         comp = self._parse_comp(comp)
-        print(comp)
         return comp
 
     def get_flow(self, uid: str) -> schema.LoadedFlowSchema:
