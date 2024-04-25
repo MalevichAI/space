@@ -12,6 +12,12 @@ add_comp_to_flow = gql(
         $offset_y: Float,
         $alias: String,
         $version_id: String,
+        $memory_request: Int,
+        $memory_limit: Int,
+        $cpu_request: Int,
+        $cpu_limit: Int,
+        $storage_request: Int,
+        $storage_limit: Int,
         $selected_op: [InFlowSelectedOp!]) {
       flow(uid: $flow_id) {
         addComponent(
@@ -19,7 +25,13 @@ add_comp_to_flow = gql(
             node: {
               alias: $alias,
               offsetX: $offset_x,
-              offsetY: $offset_y
+              offsetY: $offset_y,
+              memoryRequest: $memory_request,
+              memoryLimit: $memory_limit,
+              cpuRequest: $cpu_request,
+              cpuLimit: $cpu_limit,
+              storageRequest: $storage_request,
+              storageLimit: $storage_limit
             },
             rel: {
               status: $flow_comp_status,

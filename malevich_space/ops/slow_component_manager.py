@@ -140,6 +140,16 @@ class SlowComponentManager(BaseComponentManager):
             if loaded_comp_type == schema.ComponentType.APP:
                 if comp.app and comp.app.active_op:
                     ops = self._get_ops(loaded_comp.app.ops, comp.app.active_op)
+            limits = {}
+            if comp.limits:
+                limits = {
+                    "memory_request": comp.limits.memoryRequest,
+                    "memory_limit": comp.limits.memoryLimit,
+                    "cpu_request": comp.limits.cpuRequest,
+                    "cpu_limit": comp.limits.cpuLimit,
+                    "storage_request": comp.limits.storageRequest,
+                    "storage_limit": comp.limits.storageLimit
+                }
             comp_in_flow_id = self.space.add_comp_in_flow(
                 alias=comp.alias,
                 flow_id=flow_id,
@@ -147,7 +157,8 @@ class SlowComponentManager(BaseComponentManager):
                 offset_x=comp.offsetX,
                 offset_y=comp.offsetY,
                 version_id=version_id,
-                selected_op=ops
+                selected_op=ops,
+                **limits
             )
             loaded_comps[comp.alias] = {
                 "component": loaded_comp,
