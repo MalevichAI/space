@@ -481,6 +481,34 @@ class SpaceOps(BaseService):
         comp = self._parse_comp(comp)
         return comp
 
+    def get_parsed_versioned_component_by_task_id(
+            self, *args, **kwargs
+    ) -> schema.LoadedComponentSchema:
+        comp = self.get_component_by_reverse_id(*args, **kwargs)
+        if not comp:
+            return None
+        version = self.client.execute(
+            client.get_version_by_task_id, variable_values=kwargs
+        )
+        if version['version']:
+            version = version['version']['details']['uid']
+            version = self.client.execute(
+                client.get_version,
+                variable_values={
+                    "version_id": version
+                }
+            )
+            if version['version'] is not None:
+                comp['activeBranchVersion'] = version['version']
+        branch = self.client.execute(
+            client.get_branch_by_task_id,
+            variable_values=kwargs
+        )
+        if branch['branch']:
+            comp['activeBranch'] = branch['branch']
+        return self._parse_comp(comp)
+
+
     def get_flow(self, uid: str) -> schema.LoadedFlowSchema:
         results = self.client.execute(client.get_flow, variable_values={"flow_id": uid})
         return schema.LoadedFlowSchema(
