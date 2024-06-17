@@ -489,8 +489,8 @@ class SpaceOps(BaseService):
             return None
         version = self.client.execute(
             client.get_version_by_task_id, variable_values=kwargs
-        )
-        if version['version']:
+        )['task']
+        if version and version['version']:
             version = version['version']['details']['uid']
             version = self.client.execute(
                 client.get_version,
@@ -503,7 +503,7 @@ class SpaceOps(BaseService):
         branch = self.client.execute(
             client.get_branch_by_task_id,
             variable_values=kwargs
-        )
+        )['task']
         if branch['branch']:
             comp['activeBranch'] = branch['branch']
         return self._parse_comp(comp)
@@ -812,7 +812,7 @@ class SpaceOps(BaseService):
     def get_asset(self, *, uid: str) -> schema.Asset:
         result = self.client.execute(client.get_asset, variable_values={"uid": uid})
         return self._parse_asset(result["asset"])
-    
+
     def create_asset_in_version(
             self, *, version_id: str, asset: schema.CreateAsset, host_id: str | None = None
     ) -> schema.Asset:
@@ -828,7 +828,7 @@ class SpaceOps(BaseService):
     def get_task_core_id(self, *, task_id: str) -> tuple[str, str]:
         result = self._org_request(client.get_task_core_id, variable_values={"task_id": task_id})
         return result["task"]["details"]["coreId"], result["task"]["component"]["details"]["reverseId"]
-    
+
     def get_deployments_by_reverse_id(self, *, reverse_id: str, status: list[str] | None = None) -> list[schema.LoadedTaskSchema]:
         results = self._org_request(client.get_deployments_for_reverse_id, variable_values={"reverse_id": reverse_id, "status": status})
         results = results["tasks"]["component"]["edges"]
