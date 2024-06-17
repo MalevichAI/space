@@ -1,22 +1,33 @@
-# name: Publish to PyPI
-# on:
-#   release:
-#     types: [published]
+name: Publish to PyPI
+on:
+  release:
+    types: [published]
 
-# jobs:
-#   pypi_release:
-#     name: Builds Using Poetry and Publishes to PyPI
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v3
-#       - uses: actions/setup-python@v4
-#         with:
-#           python-version: '3.11'
-#       - name: Install Poetry
-#         run: curl -sSL https://install.python-poetry.org | python -
-#       - name: Add Poetry to path
-#         run: echo "${HOME}/.poetry/bin" >> $GITHUB_PATH
-#       - run: poetry install
-#       - run: poetry config pypi-token.pypi "${{ secrets.PYPI_API_KEY }}"
-#       - name: Publish package
-#         run: poetry publish --build
+jobs:
+  pypi_release:
+    name: Builds Using Poetry and Publishes to PyPI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install Poetry
+        run: curl -sSL https://install.python-poetry.org | python -
+      - name: Add Poetry to path
+        run: echo "${HOME}/.poetry/bin" >> $GITHUB_PATH
+      - run: poetry install
+      - name: Changing version
+        run: |
+          echo "${GITHUB_REF#refs/*/}"
+          echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+          RELEASE_VERSION=(echo $RELEASE_VERSION | grep "[0-9]\+.[0-9]\+.[0-9]\+[a-z]*" -o)
+          sed 's/version = ".\+"/version = "{$RELEASE_VERSION}"/g' pyproject.toml > pyproject.new.toml
+          mv pyproject.new.toml pyproject.toml
+          if [[ "${runner.debug}" == "1" ]];
+          then
+            cat pyproject.toml
+          fi
+      # - run: poetry config pypi-token.pypi "${{ secrets.PYPI_API_KEY }}"
+      # - name: Publish package
+      #   run: poetry publish --build
