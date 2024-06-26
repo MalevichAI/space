@@ -31,6 +31,14 @@ query GetComponentByReverseID($reverse_id: String, $uid: String) {
           coreId
         }
       }
+      asset {
+        details {
+          uid
+          corePath
+        }
+        downloadUrl
+        uploadUrl
+      }
       flow {
         details {
           uid

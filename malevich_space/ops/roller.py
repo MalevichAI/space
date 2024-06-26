@@ -141,9 +141,9 @@ class RollerOps:
         return self.space.invite_to_org(reverse_id=reverse_id, members=members)
 
 
-def local_roller(setup: str | None, comp_dir: str | str = None) -> RollerOps:
+def local_roller(setup: str | None, comp_dir: str | str = None, comp_manager_generator: Type[BaseComponentManager] | None = None) -> RollerOps:
     if setup:
         config = schema.Setup(**YAMLParser.parse_yaml(setup))
     else:
         config = get_active(ACTIVE_SETUP_PATH)
-    return RollerOps(config, path=comp_dir, comp_dir=comp_dir)
+    return RollerOps(config, path=comp_dir, comp_dir=comp_dir, comp_manager_generator=comp_manager_generator)

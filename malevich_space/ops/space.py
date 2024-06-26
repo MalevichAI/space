@@ -165,7 +165,7 @@ class SpaceOps(BaseService):
 
     def create_branch(self, *args, **kwargs) -> str:
         result = self.client.execute(client.create_branch, variable_values=kwargs)
-        return result["component"]["createBranch"]["uid"]
+        return result["component"]["createBranch"]["details"]["uid"]
 
     def create_version(self, *args, **kwargs) -> str:
         result = self.client.execute(client.create_version, variable_values=kwargs)
@@ -462,7 +462,15 @@ class SpaceOps(BaseService):
             base_data["collection"] = schema.LoadedCollectionAliasSchema(
                 uid=version["collection"]["details"]["uid"]
             )
-        return schema.LoadedComponentSchema(**base_data)
+        if version and "asset" in version and version["asset"]:
+            base_data["asset"] = schema.Asset(
+                uid=version["asset"]["details"]["uid"],
+                core_path=version["asset"]["details"]["corePath"],
+                download_url=version["asset"]["downloadUrl"],
+                upload_url=version["asset"]["uploadUrl"],
+            )
+        comp = schema.LoadedComponentSchema(**base_data)
+        return comp
 
     def get_parsed_component_by_reverse_id(
         self, *args, **kwargs
@@ -470,7 +478,36 @@ class SpaceOps(BaseService):
         comp = self.get_component_by_reverse_id(*args, **kwargs)
         if not comp:
             return None
+        comp = self._parse_comp(comp)
+        return comp
+
+    def get_parsed_versioned_component_by_task_id(
+            self, *args, **kwargs
+    ) -> schema.LoadedComponentSchema:
+        comp = self.get_component_by_reverse_id(*args, **kwargs)
+        if not comp:
+            return None
+        version = self.client.execute(
+            client.get_version_by_task_id, variable_values=kwargs
+        )['task']
+        if version and version['version']:
+            version = version['version']['details']['uid']
+            version = self.client.execute(
+                client.get_version,
+                variable_values={
+                    "version_id": version
+                }
+            )
+            if version['version'] is not None:
+                comp['activeBranchVersion'] = version['version']
+        branch = self.client.execute(
+            client.get_branch_by_task_id,
+            variable_values=kwargs
+        )['task']
+        if branch['branch']:
+            comp['activeBranch'] = branch['branch']
         return self._parse_comp(comp)
+
 
     def get_flow(self, uid: str) -> schema.LoadedFlowSchema:
         results = self.client.execute(client.get_flow, variable_values={"flow_id": uid})
@@ -762,7 +799,7 @@ class SpaceOps(BaseService):
             *,
             asset: schema.CreateAsset,
             host_id: str | None = None
-    ) -> tuple[str, str]:
+    ) -> schema.Asset:
         kwargs = asset.model_dump()
         kwargs["host_id"] = host_id
         result = self._org_request(client.create_asset, variable_values=kwargs)
@@ -781,7 +818,7 @@ class SpaceOps(BaseService):
     def get_asset(self, *, uid: str) -> schema.Asset:
         result = self.client.execute(client.get_asset, variable_values={"uid": uid})
         return self._parse_asset(result["asset"])
-    
+
     def create_asset_in_version(
             self, *, version_id: str, asset: schema.CreateAsset, host_id: str | None = None
     ) -> schema.Asset:
@@ -790,3 +827,30 @@ class SpaceOps(BaseService):
         kwargs["host_id"] = host_id
         result = self._org_request(client.create_asset_in_version, variable_values=kwargs)
         return self._parse_asset(result["version"]["createUnderlyingAsset"])
+
+    def auto_layout(self, *, flow: str):
+        self.client.execute(client.auto_layout, variable_values={"flow": flow})
+
+    def get_task_core_id(self, *, task_id: str) -> tuple[str, str]:
+        result = self._org_request(client.get_task_core_id, variable_values={"task_id": task_id})
+        return result["task"]["details"]["coreId"], result["task"]["component"]["details"]["reverseId"]
+
+    def get_deployments_by_reverse_id(self, *, reverse_id: str, status: list[str] | None = None) -> list[schema.LoadedTaskSchema]:
+        results = self._org_request(client.get_deployments_for_reverse_id, variable_values={"reverse_id": reverse_id, "status": status})
+        results = results["tasks"]["component"]["edges"]
+
+        out = []
+
+        for result in results:
+            task = result["node"]
+            details = task["details"]
+            out.append(
+                schema.LoadedTaskSchema(
+                    uid=details["uid"],
+                    state=details["bootState"],
+                    core_id=details["coreId"],
+                    last_runned_at=details["lastRunnedAt"]
+                )
+            )
+
+        return out

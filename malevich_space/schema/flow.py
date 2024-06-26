@@ -1,6 +1,7 @@
 from typing import Sequence, Union
 
 from pydantic import BaseModel
+from malevich_coretools import BasePlatformSettings
 
 from .cfg import CfgSchema, LoadedCfgSchema
 from .op import LoadedOpSchema, OpSchema
@@ -37,6 +38,7 @@ class InFlowComponentSchema(BaseModel):
     alias: str | None = None
     offsetX: float | None = None
     offsetY: float | None = None
+    limits: BasePlatformSettings | None = None
     depends: dict[str, InFlowDependency] | None = None
     app: InFlowAppSchema | None = None
     active_cfg: Union[str, CfgSchema] | None = None
@@ -53,6 +55,10 @@ class LoadedInFlowFlowSchema(BaseModel):
 
 class LoadedInFlowCollectionSchema(BaseModel):
     collection_id: str
+
+
+class LoadedInFlowAssetSchema(BaseModel):
+    asset_id: str
 
 
 class LoadedPromptSchema(BaseModel):
@@ -74,6 +80,7 @@ class LoadedInFlowComponentSchema(InFlowComponentSchema):
     prev: list["LoadedInFlowComponentSchema"] = []
     alias: str | None = None
     active_cfg: LoadedCfgSchema | None = None
+    asset: LoadedInFlowAssetSchema | None = None
 
 
 class FlowSchema(BaseModel):
