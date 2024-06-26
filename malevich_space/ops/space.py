@@ -707,6 +707,12 @@ class SpaceOps(BaseService):
 
         return outputs
 
+    def get_available_flows(self, reverse_id: str) -> dict:
+        return self.client.execute(
+            client.get_available_flows,
+            variable_values={"reverse_id": reverse_id}
+        )
+
     def create_endpoint(self, task_id: str, alias: str | None, token: str | None) -> tuple[str, str]:
         kwargs = {
             "task_id": task_id,
