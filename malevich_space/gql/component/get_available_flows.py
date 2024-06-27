@@ -39,6 +39,7 @@ query GetAvailableFlows($reverse_id: String!) {
     activeBranch {
       details {
         uid
+        name
       }
     }
   }
