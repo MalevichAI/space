@@ -10,36 +10,61 @@ get_flow = gql(
         }
         inFlowComponents {
           edges {
+            rel {
+              versionId
+            }
             node {
-              details {
-                uid
-                alias
-              }
-              prompt {
-                details {
-                  uid
-                  name
-                  body
-                  preconditions
-                  postcondition
-                }
-              }
               prev {
                 edges {
                   node {
                     details {
                       uid
                     }
-                    prompt {
-                        details {
-                          uid
-                          name
-                          body
-                          preconditions
-                          postcondition
-                        }
+                  }
+                }
+              }
+              details {
+                uid
+                alias
+              }
+              component {
+                details {
+                  uid
+                  reverseId
+                }
+              }
+                  cfg {
+                    details {
+                      uid
+                      coreId
+                      coreName
+                      cfgJson
+                      readableName
                     }
                   }
+              app {
+                details {
+                  uid
+                }
+                op(opType: ["input", "processor", "output"]) {
+                  edges {
+                    node {
+                      details {
+                        uid
+                        name
+                      }
+                    }
+                  }
+                }
+              }
+              collectionAlias {
+                details {
+                  uid
+                }
+              }
+              flow {
+                details {
+                  uid
                 }
               }
             }
