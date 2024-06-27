@@ -10,6 +10,7 @@ query GetComponentByReverseID($uid: String!, $status:[String!]) {
           details {
             uid
             lastRunnedAt
+            bootState
           }
         }
       }

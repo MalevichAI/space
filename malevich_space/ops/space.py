@@ -837,7 +837,7 @@ class SpaceOps(BaseService):
 
     def get_deployments_by_flow(self, flow_id: str, status: list[str] | None = None):
         results = self.client.execute(client.get_task_by_flow, variable_values={'uid': flow_id, "status": status})
-        results = results["task"]["flow"]["edges"]
+        results = results["tasks"]["flow"]["edges"]
         out = []
 
         for result in results:
