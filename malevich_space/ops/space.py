@@ -113,7 +113,9 @@ class SpaceOps(BaseService):
                 "env_name": env_name,
                 "key": key
             })
-            return result["user"]["me"]["env"]["key"]["details"]["value"]
+            data = result["user"]["me"]["env"]
+            if data is not None and len(data) > 0:
+                return data[0]["key"]["details"]["value"]
         return None
 
     def _parse_raw_sa(self, raw: dict[str, Any]) -> schema.LoadedSASchema:
