@@ -8,7 +8,7 @@ homepage = "https://github.com/MalevichAI/space"
 repository = "https://github.com/MalevichAI/space"
 
 [tool.poetry.dependencies]
-python = ">=3.11,<3.13"
+python = ">=3.10,<3.13"
 gql = "^3.4.0"
 PyYAML = "^6.0"
 typer = ">=0.7.0"
